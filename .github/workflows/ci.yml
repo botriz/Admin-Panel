@@ -1,9 +1,21 @@
-name: Admin Panel safety checks
+name: Admin Panel checks
+
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - "feat/**"
   pull_request:
-    branches: [main]
+    branches:
+      - "**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: admin-panel-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -12,4 +24,5 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+      - run: node --check admin-panel.js
       - run: npm test
